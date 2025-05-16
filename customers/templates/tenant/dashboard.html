@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard de {{ tenant.name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Dashboard de {{ tenant.name }}</h2>
+            <span class="badge bg-{% if tenant.on_trial %}warning text-dark{% else %}success{% endif %}">
+                {% if tenant.on_trial %}En prueba{% else %}Activo{% endif %}
+            </span>
+        </div>
+        
+        <div class="row">
+            <!-- Resumen -->
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Resumen</h5>
+                        <p class="card-text">
+                            <strong>Schema:</strong> {{ tenant.schema_name }}<br>
+                            <strong>Dominio:</strong> {{ tenant.domain_url }}<br>
+                            <strong>Pago hasta:</strong> {{ tenant.paid_until|date:"d/m/Y" }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Estadísticas -->
+            <div class="col-md-8 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Estadísticas</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card bg-light mb-3">
+                                    <div class="card-body text-center">
+                                        <h3>{{ products.count }}</h3>
+                                        <p class="card-text">Productos</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light mb-3">
+                                    <div class="card-body text-center">
+                                        <h3>{{ orders.count }}</h3>
+                                        <p class="card-text">Órdenes</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Productos -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Productos</h5>
+                    <a href="{% url 'product-add'%}" class="btn btn-sm btn-outline-primary">Agregar Producto</a>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if products %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Descripción</th>
+                                <th>Precio</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in products %}
+                            <tr>
+                                <td>{{ product.name }}</td>
+                                <td>{{ product.description|truncatechars:50 }}</td>
+                                <td>${{ product.price }}</td>
+                                <td>
+                                    <a href="{% url 'product-edit' product.id %}" class="editar btn btn-sm btn-outline-secondary">Editar</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">No hay productos registrados.</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Órdenes recientes -->
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Órdenes Recientes</h5>
+                    <a href="{% url 'order-add'%}" class="btn btn-sm btn-outline-primary">Agregar Order</a>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if orders %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                            <tr>
+                                <td>#{{ order.id }}</td>
+                                <td>{{ order.product.name }}</td>
+                                <td>{{ order.quantity }}</td>
+                                <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">No hay órdenes registradas.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const tenantIdFromUrl = parseInt(window.location.pathname.split('/')[1]);
+        const currentTenantId = {{ request.tenant.id }};
+        
+        console.log("Tenant ID from URL:", tenantIdFromUrl)
+        console.log("Current Tenant ID:", currentTenantId);
+
+        if (tenantIdFromUrl !== currentTenantId) {
+            const addProductButton = document.querySelector('a[href="{% url "product-add" %}"]');
+            if (addProductButton) {
+                addProductButton.style.display = 'none';
+            }
+            const addProductButton1 = document.querySelector('a[href="{% url "order-add" %}"]');
+            if (addProductButton1) {
+                addProductButton1.style.display = 'none';
+            }
+            const addProductButton2 = document.getElementsByClassName('editar');
+            if (addProductButton2.length > 0) {
+                for (let i = 0; i < addProductButton2.length; i++) {
+                    addProductButton2[i].style.display = 'none';
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

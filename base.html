@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sistema Multitenant{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .tenant-bar {
+            background-color: #f8f9fa;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .tenant-info {
+            font-weight: bold;
+            color: #0d6efd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Barra de identificación del tenant -->
+        <div class="tenant-bar">
+            {% if request.tenant %}
+                <span class="tenant-info">Tenant actual: {{ request.tenant.name }}</span>
+            {% else %}
+                <span class="tenant-info">Vista global (administración)</span>
+            {% endif %}
+        </div>
+
+        <!-- Menú de navegación -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">MultiTenant App</a>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        {% if request.tenant %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'tenant-dashboard' request.tenant.id %}">Dashboard</a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'client-list' %}">Clientes</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Contenido principal -->
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+
+        <!-- Pie de página -->
+        <footer class="mt-5 pt-3 text-muted border-top">
+            &copy; 2023 Sistema Multitenant
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}{% if object %}Editar{% else %}Agregar{% endif %} Cliente{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 mx-auto">
+        <h2 class="mb-4">{% if object %}Editar{% else %}Agregar{% endif %} Cliente</h2>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label for="id_name" class="form-label">Nombre del Cliente</label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                    <div class="text-danger">{{ form.name.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="mb-3">
+                <label for="id_schema_name" class="form-label">Nombre del Schema</label>
+                {{ form.schema_name }}
+                <small class="text-muted">Debe ser único y solo contener letras minúsculas y guiones bajos</small>
+                {% if form.schema_name.errors %}
+                    <div class="text-danger">{{ form.schema_name.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="mb-3">
+                <label for="id_domain_url" class="form-label">Dominio</label>
+                {{ form.domain_url }}
+                <small class="text-muted">Ejemplo: cliente1.midominio.com</small>
+                {% if form.domain_url.errors %}
+                    <div class="text-danger">{{ form.domain_url.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col">
+                    <label for="id_paid_until" class="form-label">Pago hasta</label>
+                    {{ form.paid_until }}
+                </div>
+                <div class="col">
+                    <label for="id_on_trial" class="form-label">En prueba</label>
+                    <div class="form-check form-switch mt-2">
+                        {{ form.on_trial }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a href="{% url 'client-list' %}" class="btn btn-secondary me-md-2">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

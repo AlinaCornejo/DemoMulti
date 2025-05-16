@@ -99,7 +99,7 @@ WSGI_APPLICATION = 'DemoMultitenant.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'tenant_.postgresql_backend',
+        'ENGINE': 'tenant_schemas.postgresql_backend',
         'NAME': os.environ.get('PGDATABASE', 'multitenantDemo'),
         'USER': os.environ.get('PGUSER', 'postgres'),
         'PASSWORD': os.environ.get('PGPASSWORD', 'LACS123'),

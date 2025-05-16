@@ -140,4 +140,3 @@ DEFAULT_FILE_STORAGE = 'tenant_schemas.storage.TenantFileSystemStorage'
 TENANT_MODEL = "customers.Client" 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 TENANT_LIMIT_SET_CALLS = True
-TENANT_DOMAIN_MODEL = "customers.Domain"

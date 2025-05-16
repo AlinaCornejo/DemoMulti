@@ -1,8 +1,9 @@
 from django.core.management.base import BaseCommand
-from tenant_schemas.utils import get_tenant_model, get_tenant_domain_model
+from tenant_schemas.models import TenantMixin
+from django.db import connection
 
 class Command(BaseCommand):
-    help = 'Create a new tenant'
+    help = 'Creates a new tenant'
 
     def add_arguments(self, parser):
         parser.add_argument('--schema_name', required=True)
@@ -10,18 +11,19 @@ class Command(BaseCommand):
         parser.add_argument('--domain', required=True)
 
     def handle(self, *args, **options):
-        TenantModel = get_tenant_model()
-        DomainModel = get_tenant_domain_model()
-
-        tenant = TenantModel.objects.create(
+        from customers.models import Client  # Asegúrate de importar tus modelos
+        
+        tenant = Client.objects.create(
             schema_name=options['schema_name'],
             name=options['name'],
+            domain_url=options['domain']
         )
         
-        DomainModel.objects.create(
+        # Crear el dominio asociado
+        Domain.objects.create(
             domain=options['domain'],
             tenant=tenant,
             is_primary=True
         )
 
-        self.stdout.write(self.style.SUCCESS(f'Tenant {tenant.name} created!'))
+        self.stdout.write(self.style.SUCCESS(f'Tenant {tenant.name} created successfully!'))

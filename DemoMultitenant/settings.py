@@ -43,16 +43,11 @@ SHARED_APPS = [
 TENANT_APPS = [
     
     'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
     'customers',
     'products',
 ]
 
-INSTALLED_APPS = SHARED_APPS + [app for app in TENANT_APPS if app not in SHARED_APPS]
+INSTALLED_APPS = list(SHARED_APPS + [app for app in TENANT_APPS if app not in SHARED_APPS])
 
 MIDDLEWARE = [
     'tenant_schemas.middleware.TenantMiddleware',
@@ -145,3 +140,5 @@ STATIC_URL = '/static/'
 DEFAULT_FILE_STORAGE = 'tenant_schemas.storage.TenantFileSystemStorage'
 TENANT_MODEL = "customers.Client" 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+TENANT_LIMIT_SET_CALLS = True
+TENANT_DOMAIN_MODEL = "customers.Domain"

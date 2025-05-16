@@ -18,12 +18,5 @@ class Command(BaseCommand):
             name=options['name'],
             domain_url=options['domain']
         )
-        
-        # Crear el dominio asociado
-        Domain.objects.create(
-            domain=options['domain'],
-            tenant=tenant,
-            is_primary=True
-        )
 
         self.stdout.write(self.style.SUCCESS(f'Tenant {tenant.name} created successfully!'))

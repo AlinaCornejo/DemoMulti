@@ -11,7 +11,7 @@ class Command(BaseCommand):
         parser.add_argument('--domain', required=True)
 
     def handle(self, *args, **options):
-        from customers.models import Client, Domain  # Asegúrate de importar tus modelos
+        from customers.models import Client  # Asegúrate de importar tus modelos
         
         tenant = Client.objects.create(
             schema_name=options['schema_name'],

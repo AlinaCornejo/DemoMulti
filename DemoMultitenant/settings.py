@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = '++7!j1iukn6nsgqu+yn-xz7972a1c%i!oinuz9y-ikgv(if9$y'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -41,7 +41,6 @@ SHARED_APPS = [
 ]
 
 TENANT_APPS = [
-    
     'django.contrib.admin',
     'customers',
     'products',

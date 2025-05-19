@@ -1,33 +1,27 @@
-#!/bin/bash
+#!/bin/sh
+# Configuración robusta de PATH
+export PATH="/opt/venv/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
 
-# 1. Configurar entorno
-export PATH="/opt/venv/bin:$PATH"
-
-# 2. Verificar dependencias
-if ! command -v python &> /dev/null; then
-  echo "Python no encontrado, buscando alternativas..."
-  if command -v python3 &> /dev/null; then
-    alias python=python3
-  else
-    echo "ERROR: Python no está instalado"
-    exit 1
-  fi
+# Verificación explícita de Python
+PYTHON_CMD=$(command -v python3 || command -v python)
+if [ -z "$PYTHON_CMD" ]; then
+  echo "ERROR: Python no está instalado o no está en el PATH"
+  exit 1
 fi
 
-# 3. Migraciones
-python manage.py migrate_schemas --shared
+# 1. Migraciones compartidas
+$PYTHON_CMD manage.py migrate_schemas --shared
 
-# 4. Crear tenant
-python manage.py create_tenant \
+# 2. Crear tenant público
+$PYTHON_CMD manage.py create_tenant \
   --schema_name=public \
   --name="Public" \
-  --domain=${RAILWAY_STATIC_URL:-localhost} \
-  --client_domain=${RAILWAY_STATIC_URL:-localhost}
+  --domain=${RAILWAY_STATIC_URL:-localhost}
 
-# 5. Migraciones para tenants
-python manage.py migrate_schemas
+# 3. Migraciones para tenants
+$PYTHON_CMD manage.py migrate_schemas
 
-# 6. Iniciar servidor
+# 4. Iniciar servidor
 exec gunicorn DemoMultitenant.wsgi \
   --workers ${GUNICORN_WORKERS:-2} \
   --timeout 120 \
